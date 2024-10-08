@@ -6,35 +6,33 @@ const PeopleContext = createContext();
 
 export const PeopleProvider = ({ children }) => {
 	const [people, setPeople] = useState([]);
+
 	const STORAGE_KEY = "people";
 
 	useEffect(() => {
 		const loadPeople = async () => {
 			const savedPeople = await AsyncStorage.getItem(STORAGE_KEY);
-			if (savedPeople) {
-				setPeople(JSON.parse(savedPeople));
-			}
-		}
+			if (savedPeople) setPeople(JSON.parse(savedPeople));
+		};
 		loadPeople();
-	}, [])
+	}, []);
 
-
-	const addPeople = async (name, dob) => {
+	const addPerson = async (name, dob) => {
 		const newPerson = {
 			id: randomUUID(),
 			name,
-			dob
-		}
-		const newPeople = [...people, newPerson];
-		setPeople(newPeople);
-		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPeople));
-	}
+			dob,
+		};
+		const updatedPeople = [...people, newPerson];
+		setPeople(updatedPeople);
+		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
+	};
 
 	return (
-		<PeopleContext.Provider value={{ people, addPeople }}>
+		<PeopleContext.Provider value={{ people, addPerson }}>
 			{children}
 		</PeopleContext.Provider>
-	)
+	);
 };
 
 export default PeopleContext;
