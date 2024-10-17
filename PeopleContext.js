@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { randomUUID } from "expo-crypto";
+import { PaperProvider } from "react-native-paper";
 
 const PeopleContext = createContext();
 
@@ -22,6 +23,7 @@ export const PeopleProvider = ({ children }) => {
 			id: randomUUID(),
 			name,
 			dob,
+			idea: []
 		};
 		const updatedPeople = [...people, newPerson];
 		setPeople(updatedPeople);
@@ -29,9 +31,11 @@ export const PeopleProvider = ({ children }) => {
 	};
 
 	return (
-		<PeopleContext.Provider value={{ people, addPerson }}>
-			{children}
-		</PeopleContext.Provider>
+		<PaperProvider>
+			<PeopleContext.Provider value={{ people, addPerson }}>
+				{children}
+			</PeopleContext.Provider>
+		</PaperProvider>
 	);
 };
 

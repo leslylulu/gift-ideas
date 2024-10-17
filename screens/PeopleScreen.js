@@ -14,23 +14,23 @@ export default function PeopleScreen() {
 
 
 	const renderPerson = ({ item }) => {
+
 		return (
-			<View style={styles.card}>
+			<TouchableOpacity style={styles.card} onPress={() => navigation.navigate("Ideas", { personId: item.id })}>
 				<View style={styles.userCard}>
 					<View>
-						<EvilIcons name="user" size={24} color="white" />
+						<EvilIcons name="user" size={24} color="#000" />
 					</View>
 					<View >
 						<Text style={styles.name}>{item.name}</Text>
 						<Text style={styles.dob}>{item.dob}</Text>
 					</View>
-
 				</View>
 
 				<View>
-					<MaterialCommunityIcons name="thought-bubble" size={24} color="white" />
+					<MaterialCommunityIcons name="thought-bubble" size={24} color="#000" />
 				</View>
-			</View>
+			</TouchableOpacity >
 		)
 	}
 
@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		backgroundColor: '#829',
+		backgroundColor: '#DDF42B',
 		margin: 4,
 		borderRadius: 16,
 		alignItems: 'center',
@@ -80,10 +80,10 @@ const styles = StyleSheet.create({
 	},
 	name: {
 		fontWeight: 'bold',
-		color: 'white'
+		color: '#000'
 	},
 	dob: {
-		color: '#ccc'
+		color: '#333'
 	},
 	addButton: {
 		width: "100%",
