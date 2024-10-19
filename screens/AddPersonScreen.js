@@ -6,22 +6,22 @@ import {
 	Keyboard,
 	TouchableWithoutFeedback,
 	Platform,
-	Button,
 	View,
 	Text,
 	Animated,
-	TouchableOpacity
+	TouchableOpacity,
+	TextInput
 } from "react-native";
 import PeopleContext from "../PeopleContext";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { TextInput } from 'react-native-paper';
 import DatePicker from 'react-native-modern-datepicker';
 
 export default function AddPersonScreen() {
 	const [name, setName] = useState("");
 	const [dob, setDob] = useState("");
 	const { addPerson } = useContext(PeopleContext);
+	const [isSaveSuccess, setSaveSuccess] = useState(false);
 	const [isModalVisible, setModalVisible] = useState(false);
 	const slideAnim = useRef(new Animated.Value(300)).current;
 
@@ -30,18 +30,20 @@ export default function AddPersonScreen() {
 	const savePerson = () => {
 		if (name && dob) {
 			addPerson(name, dob);
+			setSaveSuccess(true);
 			navigation.goBack();
+		} else {
+			// TODO if failed go back to the list page and show an error message in modal
+			setSaveSuccess(false);
 		}
-
 	}
-
 
 	const showDatePicker = () => {
 		setModalVisible(true);
 		Animated.timing(slideAnim, {
-			toValue: 0, // 从底部向上平移至视图内
-			duration: 400, // 动画持续时间
-			useNativeDriver: true, // 使用原生驱动提高性能
+			toValue: 0,
+			duration: 400,
+			useNativeDriver: true,
 		}).start();
 	};
 
@@ -50,7 +52,7 @@ export default function AddPersonScreen() {
 			toValue: 800,
 			duration: 400,
 			useNativeDriver: true,
-		}).start(() => setModalVisible(false)); // 动画结束后关闭Modal
+		}).start(() => setModalVisible(false));
 	};
 
 	return (
@@ -62,7 +64,7 @@ export default function AddPersonScreen() {
 				>
 					<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 						<View style={styles.form}>
-							<TextInput mode="outlined" label={"Name"} placeholder="Name" value={name} onChangeText={setName} />
+							<TextInput style={styles.nameInput} placeholder="Name" value={name} onChangeText={setName} />
 							<View style={styles.date}>
 								<TouchableOpacity style={styles.selectBtn} onPress={showDatePicker}>
 									<Text>Select Date</Text>
@@ -70,12 +72,13 @@ export default function AddPersonScreen() {
 								<Text style={styles.dob}>{dob}</Text>
 							</View>
 							<View style={styles.formBtns}>
-								<TouchableOpacity style={styles.confirmBtn} onPress={savePerson}>
-									<Text>Save</Text>
+								<TouchableOpacity style={styles.confirmForm} onPress={savePerson}>
+									<Text style={styles.confirmFormText}>Save</Text>
 								</TouchableOpacity>
-								<TouchableOpacity style={styles.cancelBtn} onPress={() => navigation.goBack()}>
-									<Text>Cancel</Text>
+								<TouchableOpacity style={styles.cancelForm} onPress={() => navigation.goBack()}>
+									<Text style={styles.cancelFormText}>Cancel</Text>
 								</TouchableOpacity>
+
 							</View>
 
 						</View>
@@ -87,7 +90,6 @@ export default function AddPersonScreen() {
 					<TouchableWithoutFeedback onPress={hideDatePicker}>
 						<View style={styles.modalBackground}>
 							<TouchableWithoutFeedback>
-								{/* Animated View 实现从底部平移 */}
 								<Animated.View style={[styles.animatedView, { transform: [{ translateY: slideAnim }] }]}>
 									<DatePicker
 										onSelectedChange={(date) => setDob(date)}
@@ -103,7 +105,6 @@ export default function AddPersonScreen() {
 										mode="calendar"
 										minuteInterval={30}
 										style={{ borderRadius: 20 }}
-									// display={Platform.OS === "ios" ? "inline" : "default"}
 									/>
 									<View style={styles.buttonGroup}>
 										<TouchableOpacity style={styles.confirmBtn} onPress={hideDatePicker}>
@@ -112,8 +113,6 @@ export default function AddPersonScreen() {
 										<TouchableOpacity style={styles.cancelBtn} onPress={hideDatePicker}>
 											<Text>Close</Text>
 										</TouchableOpacity>
-										{/* <Button style={styles.confirmBtn} title="confirm" onPress={hideDatePicker} />
-										<Button style={styles.cancelBtn} title="close" onPress={hideDatePicker} /> */}
 									</View>
 								</Animated.View>
 							</TouchableWithoutFeedback>
@@ -138,6 +137,14 @@ const styles = StyleSheet.create({
 		marginRight: 10,
 		flexDirection: "column",
 		gap: 10,
+		marginTop: 20,
+	},
+	nameInput: {
+		padding: 14,
+		borderRadius: 10,
+		backgroundColor: "#fff",
+		borderWidth: 1,
+		borderColor: "#ccc",
 	},
 	date: {
 		flexDirection: "row",
@@ -161,8 +168,32 @@ const styles = StyleSheet.create({
 		marginTop: 20,
 	},
 	formBtns: {
+		display: "flex",
 		flexDirection: "column",
 		gap: 10,
+		width: "100%",
+		justifyContent: "space-around",
+		marginTop: 20,
+	},
+	confirmForm: {
+		padding: 18,
+		borderRadius: 16,
+		backgroundColor: "#DDF42B",
+	},
+	confirmFormText: {
+		textAlign: "center",
+		color: "#000",
+		fontWeight: "bold",
+	},
+	cancelForm: {
+		padding: 18,
+		borderRadius: 16,
+		backgroundColor: "#000",
+	},
+	cancelFormText: {
+		textAlign: "center",
+		color: "#fff",
+		fontWeight: "bold",
 	},
 	confirmBtn: {
 		padding: 18,
