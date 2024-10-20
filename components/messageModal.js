@@ -8,7 +8,8 @@ import {
 } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
-const MessageModal = ({ visible, type, message, onConfirm, onCancel }) => {
+const MessageModal = ({ visible = false, type, message, onConfirm, onCancel }) => {
+
   return (
     <Modal
       transparent={true}

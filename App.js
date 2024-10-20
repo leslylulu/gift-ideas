@@ -9,6 +9,7 @@ import { PeopleProvider } from './PeopleContext';
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+
   const [loaded, error] = useFonts({
     Poppins_400Regular,
     Poppins_700Bold,
@@ -21,7 +22,9 @@ export default function App() {
   }, [loaded, error]);
 
   if (!loaded && !error) {
-    return null;
+    return <View style={styles.splashContainer}>
+      <Text style={styles.loadingText}>Loading Fonts...</Text>
+    </View>;
   }
 
   return (
@@ -37,5 +40,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  splashContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  loadingText: {
+    fontSize: 18,
   },
 });

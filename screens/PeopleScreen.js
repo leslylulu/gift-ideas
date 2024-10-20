@@ -1,16 +1,21 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { StyleSheet, FlatList, View, Text, SafeAreaView, TouchableOpacity, Button } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import PeopleContext from "../PeopleContext";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 
+import MessageModal from "../components/messageModal";
+import PeopleContext from "../PeopleContext";
+
+
 export default function PeopleScreen() {
 	const navigation = useNavigation();
+	const [selectedPerson, setSelectedPerson] = useState(null);
+	const [isDelModalVisible, setIsDelModalVisible] = useState(false);
 	const { people, deletePerson } = useContext(PeopleContext);
 	let prevOpenedRow;
 
@@ -27,12 +32,13 @@ export default function PeopleScreen() {
 			return (
 				<View
 					style={styles.delbtn}>
-					<TouchableOpacity onPress={() => deletePersonFun(item.id)}>
+					<TouchableOpacity onPress={() => deletePersonFun(item)}>
 						<AntDesign name="delete" size={18} color="#fff" />
 					</TouchableOpacity>
 				</View>
 			);
 		};
+
 
 		return (
 			<Swipeable
@@ -63,16 +69,22 @@ export default function PeopleScreen() {
 		navigation.navigate("Ideas", { personId, name });
 	}
 
-	const deletePersonFun = async (personId) => {
+	const deletePersonFun = (person) => {
+		setSelectedPerson(person);
+		setIsDelModalVisible(true);
+	};
+
+	const handleConfirmDelete = async () => {
 		try {
-			await deletePerson(personId);
+			await deletePerson(selectedPerson.id);
+			setIsDelModalVisible(false);
 		} catch (error) {
 			console.error("Error deleting person:", error); // Log the error to debug
 			alert("An error occurred while deleting the person. Please try again."); // Show an alert to the user
 		}
-	};
+	}
 
-
+	console.log(JSON.stringify(people));
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
@@ -90,6 +102,15 @@ export default function PeopleScreen() {
 					data={people}
 					renderItem={(item) => renderPerson(item, goIdeasPage, deletePersonFun)}
 					keyExtractor={(item) => item.id.toString()}
+				/>
+
+				<MessageModal
+					type="Warning"
+					title="Delete Person"
+					visible={isDelModalVisible}
+					onCancel={() => setIsDelModalVisible(false)}
+					onConfirm={handleConfirmDelete}
+					message={`Are you sure you want to delete this ${selectedPerson?.name} person?`}
 				/>
 			</SafeAreaView>
 		</SafeAreaProvider>
