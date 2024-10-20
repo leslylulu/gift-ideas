@@ -18,6 +18,12 @@ export const PeopleProvider = ({ children }) => {
 	}, []);
 
 	const addPerson = async (name, dob) => {
+		if (!name || typeof name !== 'string') {
+			throw new Error("Invalid name: Name must be a non-empty string.");
+		}
+		if (!dob || isNaN(new Date(dob))) {
+			throw new Error("Invalid date of birth: Date of birth must be a valid date.");
+		}
 		const newPerson = {
 			id: randomUUID(),
 			name,
@@ -30,6 +36,18 @@ export const PeopleProvider = ({ children }) => {
 	};
 
 	const updatePerson = async (personId, idea) => {
+		const personExists = people.some((person) => person.id === personId);
+		if (!personExists) {
+			throw new Error("Invalid person ID: No person found with the given ID.");
+		}
+
+		if (!idea || !idea.text || typeof idea.text !== 'string') {
+			throw new Error("Invalid idea: Idea must have a valid text property.");
+		}
+		if (!idea.img || typeof idea.img !== 'string') {
+			throw new Error("Invalid idea: Image URL must be a valid string.");
+		}
+
 		const updatedPeople = people.map((person) =>
 			person.id === personId
 				? {
@@ -45,10 +63,19 @@ export const PeopleProvider = ({ children }) => {
 
 
 	const deleteIdea = async (personId, ideaId) => {
-		// Update the people state by removing the specified idea
+
+		const person = people.find((person) => person.id === personId);
+		if (!person) {
+			throw new Error("Invalid person ID: No person found with the given ID.");
+		}
+
+		const ideaExists = person.ideas.some((idea) => idea.id === ideaId);
+		if (!ideaExists) {
+			throw new Error("Invalid idea ID: No idea found with the given ID.");
+		}
+
 		const updatedPeople = people.map((person) => {
 			if (person.id === personId) {
-				// Filter out the idea to be deleted
 				return {
 					...person,
 					ideas: person.ideas.filter((idea) => idea.id !== ideaId),
@@ -57,12 +84,16 @@ export const PeopleProvider = ({ children }) => {
 			return person;
 		});
 
-		// Update state and AsyncStorage
 		setPeople(updatedPeople);
 		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
 	};
 
 	const deletePerson = async (personId) => {
+		const personExists = people.some((person) => person.id === personId);
+		if (!personExists) {
+			throw new Error("Invalid person ID: No person found with the given ID.");
+		}
+
 		const updatedPeople = people.filter((person) => person.id !== personId);
 		setPeople(updatedPeople);
 		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));

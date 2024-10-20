@@ -26,10 +26,8 @@ export default function AddIdeaScreen({ route }) {
 
 	const [cameraRef, setCameraRef] = useState(null);
 	const [facing, setFacing] = useState("back");
-	// const [facing, setFacing] = useState(Camera.Constants.Type.back); // Updated to use Camera.Constants.Type
 	const [photo, setPhoto] = useState(null);
 	const [ideaText, setIdeaText] = useState("");
-	// const [aspectRatio, setAspectRatio] = useState("2:3");
 	const aspectRatio = 2 / 3;
 	const [sizes, setSizes] = useState([]);
 	const navigation = useNavigation();
@@ -64,9 +62,6 @@ export default function AddIdeaScreen({ route }) {
 			const screenWidth = Dimensions.get("window").width;
 			setImageWidth(Math.floor(screenWidth * 0.6)); // Use 60% of screen width
 			setImageHeight(Math.floor(imageWidth * aspectRatio));
-			// const imageHeight = Math.floor(imageWidth * aspectRatio);
-
-			//  options
 			const options = {
 				quality: 0.8,
 				pictureSize: sizes.length > 0 ? sizes[1] : `${imageWidth}x${imageHeight}`,
@@ -74,7 +69,6 @@ export default function AddIdeaScreen({ route }) {
 				skipProcessing: false,
 			}
 
-			// Manipulate image to fit 2:3 aspect ratio
 			const image = await cameraRef.takePictureAsync(options);
 			setPhoto(image.uri); // Set the manipulated photo URI
 		}
@@ -114,7 +108,7 @@ export default function AddIdeaScreen({ route }) {
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.addIdeaPage}>
 				<View style={styles.ideaHeader}>
-					<Text style={{ fontWeight: "bold" }}>Add Idea for {name}</Text>
+					<Text style={{ fontWeight: "bold", fontFamily: "Poppins_400Regular" }}>Add Idea for {name}</Text>
 					<TextInput
 						style={styles.ideaInput}
 						value={ideaText}
@@ -195,6 +189,7 @@ const styles = StyleSheet.create({
 		borderColor: "#ccc",
 		marginTop: 10,
 		width: "80%",
+		fontFamily: "Poppins_400Regular",
 	},
 	cameraContainer: {
 		flex: 1,
@@ -219,7 +214,8 @@ const styles = StyleSheet.create({
 	},
 	flipText: {
 		fontSize: 18,
-		color: "black",
+		color: "#000",
+		fontFamily: "Poppins_400Regular",
 	},
 	captureButton: {
 		flexDirection: "row",
@@ -235,6 +231,7 @@ const styles = StyleSheet.create({
 	captureText: {
 		fontSize: 18,
 		color: "black",
+		fontFamily: "Poppins_400Regular",
 	},
 	previewContainer: {
 		flex: 1,
@@ -289,6 +286,10 @@ const styles = StyleSheet.create({
 		padding: 18,
 		borderRadius: 16,
 		backgroundColor: "#DDF42B",
+	},
+	buttonText: {
+		fontSize: 16,
+		fontFamily: "Poppins_400Regular",
 	},
 
 

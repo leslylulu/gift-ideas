@@ -55,6 +55,15 @@ export default function AddPersonScreen() {
 		}).start(() => setModalVisible(false));
 	};
 
+	const handleSelectDate = (date) => {
+		const selectedDate = new Date(date.replace(/\//g, '-')); // 替换斜杠为连字符
+		const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1)
+			.toString()
+			.padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
+		setDob(formattedDate);
+
+	};
+
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView>
@@ -67,7 +76,7 @@ export default function AddPersonScreen() {
 							<TextInput style={styles.nameInput} placeholder="Name" value={name} onChangeText={setName} />
 							<View style={styles.date}>
 								<TouchableOpacity style={styles.selectBtn} onPress={showDatePicker}>
-									<Text>Select Date</Text>
+									<Text style={styles.selectBtnText}>Select Date</Text>
 								</TouchableOpacity>
 								<Text style={styles.dob}>{dob}</Text>
 							</View>
@@ -92,7 +101,7 @@ export default function AddPersonScreen() {
 							<TouchableWithoutFeedback>
 								<Animated.View style={[styles.animatedView, { transform: [{ translateY: slideAnim }] }]}>
 									<DatePicker
-										onSelectedChange={(date) => setDob(date)}
+										onSelectedChange={handleSelectDate}
 										options={{
 											backgroundColor: '#fff',
 											textHeaderColor: '#000000',
@@ -145,17 +154,34 @@ const styles = StyleSheet.create({
 		backgroundColor: "#fff",
 		borderWidth: 1,
 		borderColor: "#ccc",
+		fontFamily: "Poppins_400Regular",
 	},
 	date: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		// backgroundColor: "#fff",
+	},
+	dob: {
+		backgroundColor: "#fff",
+		borderWidth: 1,
+		borderColor: "#ccc",
+		borderRadius: 8,
+		padding: 16,
+		fontSize: 16,
+		fontWeight: "bold",
+		overflow: "hidden",
+		minWidth: "50%",
+		fontFamily: "Poppins_700Bold",
 	},
 	selectBtn: {
 		padding: 14,
 		borderRadius: 10,
 		backgroundColor: "#DDF42B",
+	},
+	selectBtnText: {
+		fontSize: 16,
+		color: "#000",
+		fontFamily: "Poppins_400Regular",
 	},
 	modalBackground: {
 		flex: 1,
@@ -183,7 +209,7 @@ const styles = StyleSheet.create({
 	confirmFormText: {
 		textAlign: "center",
 		color: "#000",
-		fontWeight: "bold",
+		fontFamily: "Poppins_700Bold",
 	},
 	cancelForm: {
 		padding: 18,
@@ -193,7 +219,8 @@ const styles = StyleSheet.create({
 	cancelFormText: {
 		textAlign: "center",
 		color: "#fff",
-		fontWeight: "bold",
+		fontFamily: "Poppins_700Bold",
+
 	},
 	confirmBtn: {
 		padding: 18,

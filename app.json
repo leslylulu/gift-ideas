@@ -13,7 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-       "infoPlist": {
+      "infoPlist": {
         "NSMicrophoneUsageDescription": "Want to access your microphone because...",
         "NSPhotoLibraryUsageDescription": "Want to access your photo library because...",
         "NSCameraUsageDescription": "Want to use your camera because..."
@@ -30,9 +30,11 @@
         "WRITE_EXTERNAL_STORAGE"
       ]
     },
- 
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

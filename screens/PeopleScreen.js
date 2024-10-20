@@ -63,8 +63,13 @@ export default function PeopleScreen() {
 		navigation.navigate("Ideas", { personId, name });
 	}
 
-	const deletePersonFun = (personId) => {
-		deletePerson(personId);
+	const deletePersonFun = async (personId) => {
+		try {
+			await deletePerson(personId);
+		} catch (error) {
+			console.error("Error deleting person:", error); // Log the error to debug
+			alert("An error occurred while deleting the person. Please try again."); // Show an alert to the user
+		}
 	};
 
 
@@ -109,6 +114,7 @@ const styles = StyleSheet.create({
 		fontWeight: 'bold',
 		color: '#111',
 		textAlign: 'center',
+		fontFamily: 'Poppins_400Regular',
 	},
 	card: {
 		padding: 16,
@@ -128,10 +134,12 @@ const styles = StyleSheet.create({
 	},
 	name: {
 		fontWeight: 'bold',
-		color: '#000'
+		color: '#000',
+		fontFamily: 'Poppins_400Regular',
 	},
 	dob: {
-		color: '#333'
+		color: '#333',
+		fontFamily: 'Poppins_400Regular',
 	},
 	addButton: {
 		width: "100%",
@@ -165,5 +173,6 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 8,
 		borderRadius: 8,
+		fontFamily: 'Poppins_400Regular',
 	},
 });
