@@ -147,6 +147,7 @@ export default function AddPersonScreen() {
 				<MessageModal
 					visible={isFailVisible}
 					type="Error"
+					title="Error to save person"
 					message={errorMessage()}
 					onConfirm={() => setFailVisible(false)}
 					onCancel={() => setFailVisible(false)}
