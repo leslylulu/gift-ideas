@@ -1,7 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { randomUUID } from "expo-crypto";
-import { PaperProvider } from "react-native-paper";
 
 const PeopleContext = createContext();
 
@@ -23,19 +22,58 @@ export const PeopleProvider = ({ children }) => {
 			id: randomUUID(),
 			name,
 			dob,
-			idea: []
+			ideas: []
 		};
 		const updatedPeople = [...people, newPerson];
 		setPeople(updatedPeople);
 		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
 	};
 
+	const updatePerson = async (personId, idea) => {
+		const updatedPeople = people.map((person) =>
+			person.id === personId
+				? {
+					...person,
+					ideas: [...person.ideas, idea] // Append the new idea to the existing ideas
+				}
+				: person
+		);
+
+		setPeople(updatedPeople);
+		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
+	};
+
+
+	const deleteIdea = async (personId, ideaId) => {
+		// Update the people state by removing the specified idea
+		const updatedPeople = people.map((person) => {
+			if (person.id === personId) {
+				// Filter out the idea to be deleted
+				return {
+					...person,
+					ideas: person.ideas.filter((idea) => idea.id !== ideaId),
+				};
+			}
+			return person;
+		});
+
+		// Update state and AsyncStorage
+		setPeople(updatedPeople);
+		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
+	};
+
+	const deletePerson = async (personId) => {
+		const updatedPeople = people.filter((person) => person.id !== personId);
+		setPeople(updatedPeople);
+		await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedPeople));
+	}
+
+
+
 	return (
-		<PaperProvider>
-			<PeopleContext.Provider value={{ people, addPerson }}>
-				{children}
-			</PeopleContext.Provider>
-		</PaperProvider>
+		<PeopleContext.Provider value={{ people, addPerson, updatePerson, deleteIdea, deletePerson }}>
+			{children}
+		</PeopleContext.Provider>
 	);
 };
 

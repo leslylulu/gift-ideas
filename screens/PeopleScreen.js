@@ -6,34 +6,71 @@ import EvilIcons from '@expo/vector-icons/EvilIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import PeopleContext from "../PeopleContext";
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 export default function PeopleScreen() {
 	const navigation = useNavigation();
-	const { people } = useContext(PeopleContext);
+	const { people, deletePerson } = useContext(PeopleContext);
+	let prevOpenedRow;
 
-	const renderPerson = ({ item }) => {
+
+	const renderPerson = ({ item, index }, goIdeasPage, deletePersonFun) => {
+		const closeRow = (index) => {
+			if (prevOpenedRow && prevOpenedRow !== people[index]) {
+				prevOpenedRow.close();
+			}
+			prevOpenedRow = people[index];
+		};
+
+		const renderRightActions = (progress, dragX, onPress) => {
+			return (
+				<View
+					style={styles.delbtn}>
+					<TouchableOpacity onPress={() => deletePersonFun(item.id)}>
+						<AntDesign name="delete" size={18} color="#fff" />
+					</TouchableOpacity>
+				</View>
+			);
+		};
 
 		return (
-			<TouchableOpacity style={styles.card} onPress={() => navigation.navigate("Ideas", { personId: item.id, name: item.name })}>
-				<View style={styles.userCard}>
+			<Swipeable
+				renderRightActions={(progress, dragX) =>
+					renderRightActions(progress, dragX)
+				}
+				onSwipeableOpen={() => closeRow(index)}
+				rightOpenValue={-140}>
+				<TouchableOpacity style={styles.card} onPress={() => goIdeasPage(item.id, item.name)}>
+					<View style={styles.userCard}>
+						<View>
+							<EvilIcons name="user" size={24} color="#000" />
+						</View>
+						<View >
+							<Text style={styles.name}>{item.name}</Text>
+							<Text style={styles.dob}>{item.dob}</Text>
+						</View>
+					</View>
 					<View>
-						<EvilIcons name="user" size={24} color="#000" />
+						<MaterialCommunityIcons name="thought-bubble" size={24} color="#000" />
 					</View>
-					<View >
-						<Text style={styles.name}>{item.name}</Text>
-						<Text style={styles.dob}>{item.dob}</Text>
-					</View>
-				</View>
-				<View>
-					<MaterialCommunityIcons name="thought-bubble" size={24} color="#000" />
-				</View>
-			</TouchableOpacity >
-		)
+				</TouchableOpacity >
+			</Swipeable>
+		);
+	};
+
+	const goIdeasPage = (personId, name) => {
+		navigation.navigate("Ideas", { personId, name });
 	}
+
+	const deletePersonFun = (personId) => {
+		deletePerson(personId);
+	};
+
 
 	return (
 		<SafeAreaProvider>
-			<SafeAreaView>
+			<SafeAreaView style={styles.container}>
 				<View style={styles.header}>
 					<View style={styles.title}>
 						<Text style={styles.titleText}>Quick Add Person</Text>
@@ -42,13 +79,12 @@ export default function PeopleScreen() {
 						<FontAwesome5 name="user-plus" size={36} color="black" />
 						<Text style={styles.addBtn}>Add Person</Text>
 					</TouchableOpacity>
-
 				</View>
 				<FlatList
 					style={styles.userList}
 					data={people}
-					keyExtractor={item => item.id}
-					renderItem={renderPerson}
+					renderItem={(item) => renderPerson(item, goIdeasPage, deletePersonFun)}
+					keyExtractor={(item) => item.id.toString()}
 				/>
 			</SafeAreaView>
 		</SafeAreaProvider>
@@ -57,6 +93,9 @@ export default function PeopleScreen() {
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+	},
 	userList: {
 		margin: 8,
 		display: 'flex',
@@ -108,6 +147,16 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		padding: 16,
 		gap: 8,
+	},
+	delbtn: {
+		display: 'flex',
+		backgroundColor: 'red',
+		justifyContent: 'center',
+		alignItems: 'center',
+		color: 'white',
+		borderRadius: 16,
+		paddingLeft: 24,
+		paddingRight: 24,
 	},
 	addBtn: {
 		fontSize: 16,
