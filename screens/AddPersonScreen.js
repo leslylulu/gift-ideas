@@ -17,11 +17,13 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DatePicker from 'react-native-modern-datepicker';
 
+import MessageModal from "../components/messageModal";
+
 export default function AddPersonScreen() {
 	const [name, setName] = useState("");
 	const [dob, setDob] = useState("");
 	const { addPerson } = useContext(PeopleContext);
-	const [isSaveSuccess, setSaveSuccess] = useState(false);
+	const [isFailVisible, setFailVisible] = useState(false);
 	const [isModalVisible, setModalVisible] = useState(false);
 	const slideAnim = useRef(new Animated.Value(300)).current;
 
@@ -30,13 +32,14 @@ export default function AddPersonScreen() {
 	const savePerson = () => {
 		if (name && dob) {
 			addPerson(name, dob);
-			setSaveSuccess(true);
+			setFailVisible(false);
 			navigation.goBack();
 		} else {
-			// TODO if failed go back to the list page and show an error message in modal
-			setSaveSuccess(false);
+			setFailVisible(true);
 		}
 	}
+
+
 
 	const showDatePicker = () => {
 		setModalVisible(true);
@@ -52,7 +55,9 @@ export default function AddPersonScreen() {
 			toValue: 800,
 			duration: 400,
 			useNativeDriver: true,
-		}).start(() => setModalVisible(false));
+		}).start(() => {
+			setModalVisible(false);
+		});
 	};
 
 	const handleSelectDate = (date) => {
@@ -61,8 +66,18 @@ export default function AddPersonScreen() {
 			.toString()
 			.padStart(2, "0")}-${selectedDate.getDate().toString().padStart(2, "0")}`;
 		setDob(formattedDate);
-
+		hideDatePicker();
 	};
+
+	const errorMessage = () => {
+		let message = "Please fill in all fields";
+		if (!name) {
+			message = "Please fill in the name field";
+		} else if (!dob) {
+			message = "Please fill in the date of birth field";
+		}
+		return message;
+	}
 
 	return (
 		<SafeAreaProvider>
@@ -96,7 +111,7 @@ export default function AddPersonScreen() {
 
 				<Modal transparent={true} visible={isModalVisible} animationType="none">
 
-					<TouchableWithoutFeedback onPress={hideDatePicker}>
+					<TouchableWithoutFeedback>
 						<View style={styles.modalBackground}>
 							<TouchableWithoutFeedback>
 								<Animated.View style={[styles.animatedView, { transform: [{ translateY: slideAnim }] }]}>
@@ -115,19 +130,27 @@ export default function AddPersonScreen() {
 										minuteInterval={30}
 										style={{ borderRadius: 20 }}
 									/>
-									<View style={styles.buttonGroup}>
+									{/* <View style={styles.buttonGroup}>
 										<TouchableOpacity style={styles.confirmBtn} onPress={hideDatePicker}>
 											<Text>Confirm</Text>
 										</TouchableOpacity>
 										<TouchableOpacity style={styles.cancelBtn} onPress={hideDatePicker}>
 											<Text>Close</Text>
 										</TouchableOpacity>
-									</View>
+									</View> */}
 								</Animated.View>
 							</TouchableWithoutFeedback>
 						</View>
 					</TouchableWithoutFeedback>
 				</Modal>
+
+				<MessageModal
+					visible={isFailVisible}
+					type="Error"
+					message={errorMessage()}
+					onConfirm={() => setFailVisible(false)}
+					onCancel={() => setFailVisible(false)}
+				/>
 
 			</SafeAreaView>
 		</SafeAreaProvider>

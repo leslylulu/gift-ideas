@@ -7,8 +7,9 @@ import {
   StyleSheet,
 } from "react-native";
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-const MessageModal = ({ visible = false, type, message, onConfirm, onCancel }) => {
+const MessageModal = ({ visible = false, title, type, message, onConfirm, onCancel }) => {
 
   return (
     <Modal
@@ -19,8 +20,13 @@ const MessageModal = ({ visible = false, type, message, onConfirm, onCancel }) =
       <View style={styles.modalBackground}>
         <View style={styles.modalContainer}>
           <View style={styles.warning}>
-            <FontAwesome name="warning" size={24} color="black" />
-            <Text style={styles.modalTitle}>{type}</Text>
+            {
+              type === "Warning" ?
+                <FontAwesome name="warning" size={24} color="black" />
+                :
+                <MaterialIcons name="error" size={24} color="black" />
+            }
+            <Text style={styles.modalTitle}>{title}</Text>
           </View>
           <Text style={styles.modalMessage}>{message}</Text>
           <View style={styles.buttonGroup}>
@@ -58,16 +64,15 @@ const styles = StyleSheet.create({
   warning: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "center",
+    alignContent: "center",
+    alignItems: "center",
     gap: 8,
   },
   modalTitle: {
-    fontSize: 24,
+    fontSize: 20,
     color: "red",
-    marginBottom: 10,
     fontFamily: "Poppins_700Bold",
-
   },
   modalMessage: {
     fontSize: 16,

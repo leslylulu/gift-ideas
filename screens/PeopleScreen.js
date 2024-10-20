@@ -20,7 +20,20 @@ export default function PeopleScreen() {
 	let prevOpenedRow;
 
 
+	const sortPeopleByBirthday = (people) => {
+		return people.sort((a, b) => {
+			const dateA = new Date(a.dob);
+			const dateB = new Date(b.dob);
+			if (dateA.getMonth() === dateB.getMonth()) {
+				return dateA.getDate() - dateB.getDate();
+			}
+			return dateA.getMonth() - dateB.getMonth();
+		});
+	};
+
+
 	const renderPerson = ({ item, index }, goIdeasPage, deletePersonFun) => {
+
 		const closeRow = (index) => {
 			if (prevOpenedRow && prevOpenedRow !== people[index]) {
 				prevOpenedRow.close();
@@ -50,7 +63,7 @@ export default function PeopleScreen() {
 				<TouchableOpacity style={styles.card} onPress={() => goIdeasPage(item.id, item.name)}>
 					<View style={styles.userCard}>
 						<View>
-							<EvilIcons name="user" size={24} color="#000" />
+							<EvilIcons name="user" size={40} color="#000" />
 						</View>
 						<View >
 							<Text style={styles.name}>{item.name}</Text>
@@ -97,13 +110,18 @@ export default function PeopleScreen() {
 						<Text style={styles.addBtn}>Add Person</Text>
 					</TouchableOpacity>
 				</View>
-				<FlatList
-					style={styles.userList}
-					data={people}
-					renderItem={(item) => renderPerson(item, goIdeasPage, deletePersonFun)}
-					keyExtractor={(item) => item.id.toString()}
-				/>
-
+				{
+					people && people.length > 0 ? <FlatList
+						style={styles.userList}
+						data={sortPeopleByBirthday(people)}
+						renderItem={(item) => renderPerson(item, goIdeasPage, deletePersonFun)}
+						keyExtractor={(item) => item.id.toString()}
+					/>
+						: <View style={styles.empty}>
+							<Text style={styles.emptyText}>Oh no, we couldn't find anyone! ✨</Text>
+							<Text style={styles.emptyText}>Please add a little buddy! 💖</Text>
+						</View>
+				}
 				<MessageModal
 					type="Warning"
 					title="Delete Person"
@@ -156,7 +174,7 @@ const styles = StyleSheet.create({
 	name: {
 		fontWeight: 'bold',
 		color: '#000',
-		fontFamily: 'Poppins_400Regular',
+		fontFamily: 'Poppins_700Bold',
 	},
 	dob: {
 		color: '#333',
@@ -196,4 +214,15 @@ const styles = StyleSheet.create({
 		borderRadius: 8,
 		fontFamily: 'Poppins_400Regular',
 	},
+	empty: {
+		display: 'flex',
+		flex: 1,
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	emptyText: {
+		color: '#000',
+		fontFamily: 'Poppins_400Regular',
+	}
 });

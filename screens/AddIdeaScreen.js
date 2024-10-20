@@ -16,7 +16,9 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useNavigation } from "@react-navigation/native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { randomUUID } from "expo-crypto";
+
 import PeopleContext from "../PeopleContext";
+import MessageModal from "../components/messageModal";
 
 
 export default function AddIdeaScreen({ route }) {
@@ -33,6 +35,8 @@ export default function AddIdeaScreen({ route }) {
 	const navigation = useNavigation();
 	const [imageWidth, setImageWidth] = useState(0);
 	const [imageHeight, setImageHeight] = useState(0);
+	const [isSaveErrorVisible, setIsSaveErrorVisible] = useState(false);
+
 
 
 	// Request camera permission
@@ -78,12 +82,25 @@ export default function AddIdeaScreen({ route }) {
 		setFacing((current) => (current === "back" ? "front" : "back"));
 	}
 
+	const getErrorMessage = () => {
+		if (!ideaText) {
+			return "Please enter your idea";
+		}
+		if (!photo) {
+			return "Please take a picture";
+		}
+		return "Failed to save idea";
+	}
+
 	const saveIdea = async () => {
 		if (!ideaText || !photo) {
-			alert("Please provide both text and image before saving.");
-			return;
+			setIsSaveErrorVisible(true);
+		} else {
+			confirmSave();
 		}
+	};
 
+	const confirmSave = () => {
 		try {
 			const newIdea = {
 				id: randomUUID(),
@@ -97,7 +114,7 @@ export default function AddIdeaScreen({ route }) {
 		} catch (e) {
 			console.error("Failed to save idea", e);
 		}
-	};
+	}
 
 	const cancel = () => {
 		navigation.navigate("Ideas", { personId, name });
@@ -163,6 +180,15 @@ export default function AddIdeaScreen({ route }) {
 						<Text style={styles.buttonText}>Save</Text>
 					</TouchableOpacity>
 				</View>
+
+				<MessageModal
+					title="Error to Save Idea"
+					type="Error"
+					message={getErrorMessage()}
+					visible={isSaveErrorVisible}
+					onCancel={() => setIsSaveErrorVisible(false)}
+					onConfirm={() => setIsSaveErrorVisible(false)}
+				/>
 			</SafeAreaView>
 		</SafeAreaProvider >
 	)

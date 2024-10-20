@@ -19,8 +19,8 @@ export default function IdeaScreen({ route }) {
 	const [ideaList, setIdeaList] = useState([]);
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [isDelModalVisible, setIsDelModalVisible] = useState(false);
+	const [selectedIdea, setSelectedIdea] = useState(null);
 
-	const [selectedImage, setSelectedImage] = useState(null);
 
 	useEffect(() => {
 		const person = people.find(person => person.id === personId);
@@ -30,10 +30,10 @@ export default function IdeaScreen({ route }) {
 			Alert.alert("Person not found");
 			navigator.goBack();
 		}
-	}, [people, personId]);
+	}, [people, personId, ideaList]);
 
 	const confirmDelete = async () => {
-		await deleteIdea(personId, item.id); // Call your delete function
+		await deleteIdea(personId, selectedIdea?.id); // Call your delete function
 		const updatedPerson = people.find(person => person.id === personId);
 		if (updatedPerson) {
 			setIdeaList(updatedPerson.ideas); // Update the list after deletion
@@ -43,15 +43,14 @@ export default function IdeaScreen({ route }) {
 
 
 	const renderIdea = ({ item }) => {
-
 		const openImageModal = () => {
-			setSelectedImage(item.img);
+			setSelectedIdea(item);
 			setIsModalVisible(true);
 		}
 
-		const handleDelete = async () => {
+		const handleDelete = () => {
+			setSelectedIdea(item);
 			setIsDelModalVisible(true);
-
 		};
 
 
@@ -59,8 +58,6 @@ export default function IdeaScreen({ route }) {
 
 			// 	{/* TODO */}
 			// 	{/* Successfully	delete and reload */}
-			// 	{/* The thumbnail images should be the same aspect ratio as the images that were saved, just smaller. */}
-			// </TouchableOpacity >
 
 			<View style={styles.card}>
 				<TouchableOpacity onPress={openImageModal}>
@@ -120,7 +117,7 @@ export default function IdeaScreen({ route }) {
 				>
 					<View style={styles.modalContainer}>
 						<Image
-							source={{ uri: selectedImage }}
+							source={{ uri: selectedIdea?.img }}
 							style={styles.fullSizeImage}
 							resizeMode="contain"
 						/>
@@ -134,12 +131,11 @@ export default function IdeaScreen({ route }) {
 				<MessageModal
 					visible={isDelModalVisible}
 					type="Warning"
+					title="Delete Idea"
 					message="Are you sure you want to delete this idea?"
 					onConfirm={confirmDelete}
 					onCancel={() => setIsDelModalVisible(false)}
 				/>
-
-
 			</SafeAreaView>
 		</SafeAreaProvider>
 	)
@@ -227,6 +223,7 @@ const styles = StyleSheet.create({
 	},
 	empty: {
 		display: "flex",
+		flex: 1,
 		flexDirection: "column",
 		justifyContent: "center",
 		alignItems: "center",
