@@ -102,9 +102,9 @@ export default function PeopleScreen() {
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
 				<View style={styles.header}>
-					<View style={styles.title}>
+					{/* <View style={styles.title}>
 						<Text style={styles.titleText}>Quick Add Person</Text>
-					</View>
+					</View> */}
 					<TouchableOpacity style={styles.avatarBtn} onPress={() => navigation.navigate("AddPerson")}>
 						<FontAwesome5 name="user-plus" size={36} color="black" />
 						<Text style={styles.addBtn}>Add Person</Text>
@@ -186,6 +186,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		justifyItems: 'center',
 		textAlign: 'center',
+	},
+	header: {
+		marginTop: 48
 	},
 	avatarBtn: {
 		display: 'flex',
