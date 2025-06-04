@@ -46,13 +46,28 @@ gift-ideas/
 │   ├── icon.png
 │   ├── splash.png
 │   └── screenshots/     # App screenshots for documentation
-├── components/          # Reusable UI components
 ├── context/            # Context providers for state management
-├── screens/            # Main application screens
+├── components/          # Reusable UI components
+│   └── messageModal.js  # Modal dialog for confirmations and errors
+├── screens/             # Main application screens
+│   ├── PeopleScreen.js  # Home screen to display and manage people
+│   ├── AddPersonScreen.js # Screen to add a new person with birthday
+│   ├── IdeaScreen.js    # Screen to view and manage gift ideas for a person
+│   └── AddIdeaScreen.js # Screen to add a new gift idea with camera
 ├── App.js              # Application entry point
 ├── app.json            # Expo configuration
 └── package.json        # Project dependencies
 ```
+
+## Screens
+- **PeopleScreen**: Main screen that displays a list of people with their names and birthdays sorted by date. Users can add new people or select a person to see their gift ideas. Includes swipe-to-delete functionality.
+- **AddPersonScreen**: Form screen for adding a new person with name and birthday. Features a custom animated date picker that slides up from the bottom.
+- **IdeaScreen**: Displays all gift ideas for a selected person in a grid layout. Each idea shows an image and description. Users can view images in full-screen mode or delete ideas.
+- **AddIdeaScreen**: Camera interface for capturing gift idea photos with description input. Users can switch between front and back cameras and save the idea to a person.
+
+## Components
+- **MessageModal**: A reusable modal dialog component for displaying warnings, confirmation messages, and error alerts throughout the app. Supports customizable titles, messages, and action buttons.
+
 
 ## Author
 [Lulu Zhang](https://profile.catlulu.net/)
